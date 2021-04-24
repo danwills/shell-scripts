@@ -1,18 +1,22 @@
 #!/usr/bin/env python2
 # 
-# sxd - super xd
-# 	a super lazy cd
-#   with 1 arg: uses a listing at each level to search for a match, if one is found it is selected
-#	then the rest of the path is matched up as far as possible
+# sxd - Super xd
+# 	A super lazy cd that searches back along the path for matches, then if a match is found,
+# continues down the other branch, as possible.
+#
+#   With 1 arg: uses a listing at each level to search for a match, if one is found it is selected
+#	then the rest of the path is matched up as far as possible.
 #   	
-#   2 or more args - it tries to match all of them - sometimes a bit unpredictable in this mode..
+#   With 2 or more args - it tries to match all of them - sometimes a bit unpredictable in this mode..
 #
-#   not implemented yet:
-#	with an arg formatted like a=b, the path is searched for the first part and then replaced with the second,
+#   Not implemented yet:
+#	With an arg formatted like a=b, the path is searched for the first part and then replaced with the second,
 #	then the rest of the path is lazily matched
-# 
 #
-# dan wills - dan.wills@rsp.com.au
+# Example (zsh) alias:
+#    alias xd="cd `sxd.py $@`"
+#
+# Dan Wills - gdanzo@gmail.com
 
 import os
 debug = True
@@ -75,18 +79,14 @@ try :
 					fileList.sort()
 
 					for f in fileList :
-						# if ( debug ) : print "#  examining directory entry: " + f
 						if os.path.isdir(f) :
 							matchsplit = string.split(f,"/")
-							#matchsplit.sort()
 							if ( debug ) : print "# considering: " + matchsplit[-1]
 
 							if ( matchsplit[-1] == arg.strip("/") ) or ( arg.strip("/") in matchsplit[-1] ) :
-							
 								if ( debug ) : print "#  found target           " + f
 								if ( debug ) : print "#  therest is:            " + therest 
 								
-								#if rollpath.equals( originalpath ) and x == (rolllen - 1) : 
 								if x == (rolllen - 1) : 
 									if rollpath == originalpath :
 										if ( debug ) : print "# found target in initial dir: " + f
@@ -114,27 +114,10 @@ try :
 												if ( debug ) : print "#  -----------------------------dir is bigger than best match so far " + str( matchlength )
 												rollpath = j
 												bestmatchlength = matchlength
-
-										# this was causing some bad biznani..
-										# taken it out for now
-										#
-										#elif matchlength == bestmatchlength:
-										#
-										#	matchnum = getNumMatches( j, src, "/" )
-										#  
-										#	if (debug) : print "numMatches: " + str( matchnum )
-										#
-										#	if matchnum > bestnummatches :
-										#		if (debug) : print "- - - - - - - - - - - - - - -dir has more matches than any so far: " + str( matchnum )
-										#		rollpath = j
-										#		bestnummatches = matchnum
-
 				rollsplit = string.split( rollpath, "/" )
 				rolllen = len( rollsplit )
 		
 		if wasInInitialDir : 
-			#if ( debug ) : print rollpath + "\n" + originalpath
-			
 			# if we went nowhere.. might as well try a normal 'cd'
 			if stripLastSlash( rollpath ) == stripLastSlash( originalpath ) :
 				if ( debug ) : print "# going with cd in initial dir"
@@ -149,9 +132,7 @@ try :
 					if ( debug ) : print "# going with cd into better (longer) branch match"
 					rollpath = wasInInitialDir
 					wasInInitialDir = None
-					
-		#if wasInInitialDir : print wasInInitialDir
-		#else : 
+		
 		if ( debug ) : print("#  RESULT:")
 		if ( debug ) : 
 			print( "#  " + rollpath )
